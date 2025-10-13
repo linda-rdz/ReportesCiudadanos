@@ -131,7 +131,6 @@ resources/views/
 ├── admin/solicitudes/
 │   └── index.blade.php
 └── auth/
-    ├── login.blade.php
     └── register.blade.php
 ```
 

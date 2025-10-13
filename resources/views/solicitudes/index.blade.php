@@ -6,12 +6,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Mis Solicitudes</h4>
-                    @if(auth()->user()->role === 'ciudadano')
-                        <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Nueva Solicitud
-                        </a>
-                    @endif
+                    <h4 class="mb-0">Solicitudes</h4>
+                    <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nueva Solicitud
+                    </a>
                 </div>
 
                 <div class="card-body">
@@ -102,11 +100,9 @@
                         <div class="alert alert-info text-center">
                             <h5>No hay solicitudes</h5>
                             <p>No se encontraron solicitudes con los filtros aplicados.</p>
-                            @if(auth()->user()->role === 'ciudadano')
-                                <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
-                                    Crear Primera Solicitud
-                                </a>
-                            @endif
+                            <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
+                                Crear Primera Solicitud
+                            </a>
                         </div>
                     @endforelse
 

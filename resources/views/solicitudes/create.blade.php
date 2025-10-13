@@ -5,8 +5,11 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Reportar Problema Urbano</h4>
+                    <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    </a>
                 </div>
 
                 <div class="card-body">
@@ -50,7 +53,7 @@
                                     <option value="">Seleccione una categoría...</option>
                                     @foreach($categorias as $categoria)
                                         <option value="{{ $categoria->id }}" 
-                                                @selected(old('categoria_id') == $categoria->id)>
+                                                @selected((old('categoria_id') == $categoria->id) || (isset($categoriaSeleccionada) && $categoriaSeleccionada && $categoriaSeleccionada->id == $categoria->id))>
                                             {{ $categoria->nombre }}
                                         </option>
                                     @endforeach
@@ -121,7 +124,7 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('solicitudes.index') }}" class="btn btn-outline-secondary me-md-2">
+                            <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
                                 Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary">

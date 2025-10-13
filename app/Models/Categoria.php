@@ -10,7 +10,7 @@ class Categoria extends Model
     
     public $timestamps = false;
     
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'descripcion', 'icono'];
 
     public function solicitudes()
     {

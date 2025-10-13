@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('lat', 10, 8)->nullable();
             $table->decimal('lng', 11, 8)->nullable();
             $table->string('estado')->default('Pendiente');
-            $table->foreignId('ciudadano_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('ciudadano_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('funcionario_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });

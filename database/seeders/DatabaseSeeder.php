@@ -35,14 +35,38 @@ class DatabaseSeeder extends Seeder
             'role' => 'funcionario',
         ]);
 
-        // Crear categorías
+        // Crear categorías con iconos y descripciones
         $categorias = [
-            ['nombre' => 'Baches'],
-            ['nombre' => 'Alumbrado Público'],
-            ['nombre' => 'Fugas de Agua'],
-            ['nombre' => 'Limpieza'],
-            ['nombre' => 'Semáforos'],
-            ['nombre' => 'Señalización'],
+            [
+                'nombre' => 'Baches',
+                'descripcion' => 'Reporta baches en las calles que afecten la circulación vehicular',
+                'icono' => 'road'
+            ],
+            [
+                'nombre' => 'Alumbrado Público',
+                'descripcion' => 'Lámparas fundidas, postes dañados o problemas de iluminación',
+                'icono' => 'lightbulb'
+            ],
+            [
+                'nombre' => 'Fugas de Agua',
+                'descripcion' => 'Fugas en tuberías, válvulas o sistemas de agua potable',
+                'icono' => 'tint'
+            ],
+            [
+                'nombre' => 'Limpieza',
+                'descripcion' => 'Basura acumulada, grafiti o problemas de higiene urbana',
+                'icono' => 'broom'
+            ],
+            [
+                'nombre' => 'Semáforos',
+                'descripcion' => 'Semáforos dañados, fuera de servicio o con fallas',
+                'icono' => 'traffic-light'
+            ],
+            [
+                'nombre' => 'Señalización',
+                'descripcion' => 'Señales de tránsito dañadas, faltantes o ilegibles',
+                'icono' => 'sign'
+            ],
         ];
 
         foreach ($categorias as $categoria) {

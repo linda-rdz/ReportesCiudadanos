@@ -17,3 +17,4 @@ class Colonia extends Model
         return $this->hasMany(Solicitud::class);
     }
 }
+

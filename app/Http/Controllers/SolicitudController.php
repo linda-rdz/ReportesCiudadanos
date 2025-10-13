@@ -19,11 +19,6 @@ class SolicitudController extends Controller
     {
         $query = Solicitud::with(['categoria', 'colonia', 'evidencias']);
         
-        // Si es ciudadano, solo ver sus solicitudes
-        if (auth()->user()->role === 'ciudadano') {
-            $query->where('ciudadano_id', auth()->id());
-        }
-        
         // Filtro por estado
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
@@ -37,12 +32,18 @@ class SolicitudController extends Controller
     /**
      * Mostrar formulario de creación
      */
-    public function create()
+    public function create(Request $request)
     {
         $categorias = Categoria::orderBy('nombre')->get();
         $colonias = Colonia::orderBy('nombre')->get();
         
-        return view('solicitudes.create', compact('categorias', 'colonias'));
+        // Si viene una categoría seleccionada, precargarla
+        $categoriaSeleccionada = null;
+        if ($request->has('categoria')) {
+            $categoriaSeleccionada = Categoria::find($request->categoria);
+        }
+        
+        return view('solicitudes.create', compact('categorias', 'colonias', 'categoriaSeleccionada'));
     }
 
     /**
@@ -64,7 +65,7 @@ class SolicitudController extends Controller
         $solicitud = Solicitud::create([
             ...$validated,
             'estado' => EstadoSolicitud::PENDIENTE,
-            'ciudadano_id' => auth()->id(),
+            'ciudadano_id' => null,
         ]);
 
         // Guardar evidencias si existen
@@ -87,10 +88,7 @@ class SolicitudController extends Controller
      */
     public function show(Solicitud $solicitud)
     {
-        // Verificar permisos
-        if (auth()->user()->role === 'ciudadano' && $solicitud->ciudadano_id !== auth()->id()) {
-            abort(403);
-        }
+        // Público: sin verificación de propietario
 
         $solicitud->load(['categoria', 'colonia', 'evidencias', 'ciudadano', 'funcionario']);
         
@@ -117,7 +115,7 @@ class SolicitudController extends Controller
      */
     public function updateEstado(Request $request, Solicitud $solicitud)
     {
-        $this->authorizeFuncionario();
+        // Público: sin autorización de rol
 
         $request->validate([
             'estado' => 'required|in:Pendiente,En proceso,Resuelto,Rechazado'
@@ -125,7 +123,7 @@ class SolicitudController extends Controller
 
         $solicitud->update([
             'estado' => $request->estado,
-            'funcionario_id' => auth()->id(),
+            'funcionario_id' => null,
         ]);
 
         return back()->with('success', 'Estado actualizado correctamente');
@@ -134,10 +132,5 @@ class SolicitudController extends Controller
     /**
      * Autorizar que solo funcionarios puedan realizar ciertas acciones
      */
-    protected function authorizeFuncionario()
-    {
-        if (auth()->user()->role !== 'funcionario') {
-            abort(403, 'Solo los funcionarios pueden realizar esta acción');
-        }
-    }
+    protected function authorizeFuncionario() {}
 }
