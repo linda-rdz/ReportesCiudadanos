@@ -52,20 +52,54 @@ class SolicitudController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            // Datos personales
+            'nombre' => 'required|string|max:100',
+            'apellido_paterno' => 'required|string|max:100',
+            'apellido_materno' => 'nullable|string|max:100',
+            'fecha_nacimiento' => 'required|date',
+            'celular' => 'required|string|max:20',
+            'email' => 'nullable|email|max:255',
+            
+            // Información del reporte
             'titulo' => 'required|string|max:150',
             'descripcion' => 'required|string|max:1000',
             'categoria_id' => 'required|exists:categorias,id',
+            
+            // Ubicación
             'colonia_id' => 'required|exists:colonias,id',
-            'direccion' => 'nullable|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'numero_exterior' => 'nullable|string|max:20',
+            'entre_calle' => 'required|string|max:255',
+            'y_calle' => 'required|string|max:255',
+            'referencias' => 'nullable|string|max:500',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
             'evidencias.*' => 'nullable|image|max:4096'
         ]);
 
         $solicitud = Solicitud::create([
-            ...$validated,
+            'titulo' => $validated['titulo'],
+            'descripcion' => $validated['descripcion'],
+            'categoria_id' => $validated['categoria_id'],
+            'colonia_id' => $validated['colonia_id'],
+            'direccion' => $validated['direccion'],
+            'lat' => $validated['lat'] ?? null,
+            'lng' => $validated['lng'] ?? null,
             'estado' => EstadoSolicitud::PENDIENTE,
             'ciudadano_id' => null,
+            // Guardar datos personales en un campo JSON o crear tabla separada
+            'datos_personales' => json_encode([
+                'nombre' => $validated['nombre'],
+                'apellido_paterno' => $validated['apellido_paterno'],
+                'apellido_materno' => $validated['apellido_materno'],
+                'fecha_nacimiento' => $validated['fecha_nacimiento'],
+                'celular' => $validated['celular'],
+                'email' => $validated['email'],
+                'numero_exterior' => $validated['numero_exterior'],
+                'entre_calle' => $validated['entre_calle'],
+                'y_calle' => $validated['y_calle'],
+                'referencias' => $validated['referencias'],
+            ]),
         ]);
 
         // Guardar evidencias si existen

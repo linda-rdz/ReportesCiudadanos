@@ -28,6 +28,9 @@
             margin: 0;
         }
     </style>
+    
+    <!-- Custom CSS for Reports Form -->
+    <link href="{{ asset('css/formulario-reportes.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">

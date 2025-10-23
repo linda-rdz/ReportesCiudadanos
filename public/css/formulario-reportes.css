@@ -1,0 +1,253 @@
+/* Estilos para el formulario de reportes estructurado */
+
+/* Contenedor principal del formulario */
+.form-section {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Encabezado de cada sección */
+.section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #007bff;
+}
+
+.section-title {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.section-title i {
+    color: #0056b3;
+}
+
+.section-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    font-style: italic;
+}
+
+/* Contenido de cada sección */
+.section-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+/* Estilos para los campos del formulario */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para campos requeridos */
+.form-label:after {
+    content: " *";
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Estilos para el botón de envío */
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Estilos para el botón cancelar */
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    transform: translateY(-2px);
+}
+
+/* Estilos para mensajes de error */
+.invalid-feedback {
+    font-weight: 500;
+    color: #dc3545;
+}
+
+/* Estilos para el texto de ayuda */
+.form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-style: italic;
+}
+
+/* Estilos para el header de la tarjeta */
+.card-header {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border-bottom: none;
+}
+
+.card-header h4 {
+    color: white;
+    font-weight: 600;
+}
+
+/* Estilos para la tarjeta principal */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+/* Estilos para el contenedor principal */
+.container {
+    max-width: 1000px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .form-section {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-content {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .btn-primary, .btn-outline-secondary {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Estilos para el progreso visual */
+.form-section:nth-child(1) .section-header {
+    border-bottom-color: #28a745;
+}
+
+.form-section:nth-child(1) .section-title {
+    color: #28a745;
+}
+
+.form-section:nth-child(2) .section-header {
+    border-bottom-color: #ffc107;
+}
+
+.form-section:nth-child(2) .section-title {
+    color: #ffc107;
+}
+
+.form-section:nth-child(3) .section-header {
+    border-bottom-color: #17a2b8;
+}
+
+.form-section:nth-child(3) .section-title {
+    color: #17a2b8;
+}
+
+.form-section:nth-child(4) .section-header {
+    border-bottom-color: #6f42c1;
+}
+
+.form-section:nth-child(4) .section-title {
+    color: #6f42c1;
+}
+
+/* Animaciones suaves */
+.form-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para campos de fecha */
+input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+/* Estilos para el área de archivos */
+input[type="file"] {
+    border: 2px dashed #dee2e6;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+    border-color: #007bff;
+    background: #e3f2fd;
+}
+
+/* Estilos para el textarea */
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Estilos para los iconos */
+.section-title i {
+    font-size: 1.1em;
+    margin-right: 0.5rem;
+}

@@ -19,11 +19,13 @@ class Solicitud extends Model
         'lng',
         'estado',
         'ciudadano_id',
-        'funcionario_id'
+        'funcionario_id',
+        'datos_personales'
     ];
 
     protected $casts = [
         'estado' => EstadoSolicitud::class,
+        'datos_personales' => 'array',
     ];
 
     public function categoria()
