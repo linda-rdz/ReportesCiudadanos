@@ -55,17 +55,17 @@
                                             <br>
                                             <small class="text-muted">{{ Str::limit($solicitud->descripcion, 50) }}</small>
                                         </td>
-                                        <td>{{ $solicitud->ciudadano->name ?? 'N/A' }}</td>
+                                        <td>Público</td>
                                         <td>{{ $solicitud->categoria->nombre ?? 'N/A' }}</td>
                                         <td>{{ $solicitud->colonia->nombre ?? 'N/A' }}</td>
                                         <td>
                                             <span class="badge 
-                                                @if($solicitud->estado->value === 'Pendiente') bg-warning
-                                                @elseif($solicitud->estado->value === 'En proceso') bg-info
-                                                @elseif($solicitud->estado->value === 'Resuelto') bg-success
+                                                @if($solicitud->estado === 'Pendiente') bg-warning
+                                                @elseif($solicitud->estado === 'En proceso') bg-info
+                                                @elseif($solicitud->estado === 'Resuelto') bg-success
                                                 @else bg-danger
                                                 @endif">
-                                                {{ $solicitud->estado->value }}
+                                                {{ $solicitud->estado }}
                                             </span>
                                         </td>
                                         <td>
@@ -93,7 +93,7 @@
                                                             onchange="this.form.submit()">
                                                         @foreach(['Pendiente','En proceso','Resuelto','Rechazado'] as $estado)
                                                             <option value="{{ $estado }}" 
-                                                                    @selected($solicitud->estado->value === $estado)>
+                                                                    @selected($solicitud->estado === $estado)>
                                                                 {{ $estado }}
                                                             </option>
                                                         @endforeach

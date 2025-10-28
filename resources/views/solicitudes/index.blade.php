@@ -62,12 +62,12 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <span class="badge 
-                                                    @if($solicitud->estado->value === 'Pendiente') bg-warning
-                                                    @elseif($solicitud->estado->value === 'En proceso') bg-info
-                                                    @elseif($solicitud->estado->value === 'Resuelto') bg-success
+                                                    @if($solicitud->estado === 'Pendiente') bg-warning
+                                                    @elseif($solicitud->estado === 'En proceso') bg-info
+                                                    @elseif($solicitud->estado === 'Resuelto') bg-success
                                                     @else bg-danger
                                                     @endif">
-                                                    {{ $solicitud->estado->value }}
+                                                    {{ $solicitud->estado }}
                                                 </span>
                                             </div>
                                         </div>

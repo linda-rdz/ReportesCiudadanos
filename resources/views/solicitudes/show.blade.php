@@ -8,12 +8,12 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">{{ $solicitud->titulo }}</h4>
                     <span class="badge 
-                        @if($solicitud->estado->value === 'Pendiente') bg-warning
-                        @elseif($solicitud->estado->value === 'En proceso') bg-info
-                        @elseif($solicitud->estado->value === 'Resuelto') bg-success
+                        @if($solicitud->estado === 'Pendiente') bg-warning
+                        @elseif($solicitud->estado === 'En proceso') bg-info
+                        @elseif($solicitud->estado === 'Resuelto') bg-success
                         @else bg-danger
                         @endif fs-6">
-                        {{ $solicitud->estado->value }}
+                        {{ $solicitud->estado }}
                     </span>
                 </div>
 
@@ -30,17 +30,13 @@
                                         <li><strong>Categoría:</strong> {{ $solicitud->categoria->nombre ?? 'N/A' }}</li>
                                         <li><strong>Colonia:</strong> {{ $solicitud->colonia->nombre ?? 'N/A' }}</li>
                                         <li><strong>Dirección:</strong> {{ $solicitud->direccion ?: 'No especificada' }}</li>
-                                        <li><strong>Reportado por:</strong> {{ $solicitud->ciudadano->name ?? 'N/A' }}</li>
                                         <li><strong>Fecha de reporte:</strong> {{ $solicitud->created_at->format('d/m/Y H:i') }}</li>
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
                                     <h6>Estado actual</h6>
                                     <ul class="list-unstyled">
-                                        <li><strong>Estado:</strong> {{ $solicitud->estado->value }}</li>
-                                        @if($solicitud->funcionario)
-                                            <li><strong>Asignado a:</strong> {{ $solicitud->funcionario->name }}</li>
-                                        @endif
+                                        <li><strong>Estado:</strong> {{ $solicitud->estado }}</li>
                                         @if($solicitud->updated_at != $solicitud->created_at)
                                             <li><strong>Última actualización:</strong> {{ $solicitud->updated_at->format('d/m/Y H:i') }}</li>
                                         @endif

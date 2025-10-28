@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\EstadoSolicitud;
 
 class Solicitud extends Model
 {
@@ -18,13 +17,10 @@ class Solicitud extends Model
         'lat',
         'lng',
         'estado',
-        'ciudadano_id',
-        'funcionario_id',
         'datos_personales'
     ];
 
     protected $casts = [
-        'estado' => EstadoSolicitud::class,
         'datos_personales' => 'array',
     ];
 
@@ -43,13 +39,5 @@ class Solicitud extends Model
         return $this->hasMany(Evidencia::class);
     }
 
-    public function ciudadano()
-    {
-        return $this->belongsTo(User::class, 'ciudadano_id');
-    }
-
-    public function funcionario()
-    {
-        return $this->belongsTo(User::class, 'funcionario_id');
-    }
+    // Relaciones de usuario eliminadas - sistema sin autenticación
 }
