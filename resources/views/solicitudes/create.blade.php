@@ -40,7 +40,7 @@
                     <form method="POST" action="{{ route('solicitudes.store') }}" enctype="multipart/form-data" id="reportForm">
                         @csrf
                         
-                        <!-- PASO 1: DATOS PERSONALES + INFORMACIÓN DEL REPORTE -->
+                        <!-- DATOS PERSONALES  -->
                         <div class="form-step" id="step1">
                             <div class="form-section mb-5">
                                 <div class="section-header">
@@ -186,7 +186,7 @@
                             </div>
                         </div>
 
-                        <!-- PASO 2: UBICACIÓN Y EVIDENCIAS -->
+                        <!--  UBICACIÓN Y EV -->
                         <div class="form-step" id="step2" style="display: none;">
                             <div class="form-section mb-5">
                                 <div class="section-header">
