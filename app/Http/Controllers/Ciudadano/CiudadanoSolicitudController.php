@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Ciudadano;
 
+use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
 use App\Models\Categoria;
 use App\Models\Colonia;
@@ -9,14 +10,15 @@ use App\Models\Evidencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class SolicitudController extends Controller
+class CiudadanoSolicitudController extends Controller
 {
     /**
-     * Mostrar listado de solicitudes
+     * Mostrar solo las solicitudes del ciudadano autenticado
      */
     public function index(Request $request)
     {
-        $query = Solicitud::with(['categoria', 'colonia', 'evidencias']);
+        $query = Solicitud::with(['categoria', 'colonia', 'evidencias'])
+            ->where('ciudadano_id', auth()->id());
         
         // Filtro por estado
         if ($request->filled('estado')) {
@@ -25,7 +27,7 @@ class SolicitudController extends Controller
         
         $solicitudes = $query->latest()->paginate(10);
         
-        return view('solicitudes.index', compact('solicitudes'));
+        return view('ciudadano.solicitudes.index', compact('solicitudes'));
     }
 
     /**
@@ -42,7 +44,7 @@ class SolicitudController extends Controller
             $categoriaSeleccionada = Categoria::find($request->categoria);
         }
         
-        return view('solicitudes.create', compact('categorias', 'colonias', 'categoriaSeleccionada'));
+        return view('ciudadano.solicitudes.create', compact('categorias', 'colonias', 'categoriaSeleccionada'));
     }
 
     /**
@@ -85,7 +87,7 @@ class SolicitudController extends Controller
         ]);
 
         $solicitud = Solicitud::create([
-            'titulo' => $validated['descripcion'], // Usar descripción como título
+            'titulo' => $validated['descripcion'],
             'descripcion' => $validated['descripcion'],
             'categoria_id' => $validated['categoria_id'],
             'colonia_id' => $validated['colonia_id'],
@@ -93,8 +95,7 @@ class SolicitudController extends Controller
             'lat' => $validated['lat'] ?? null,
             'lng' => $validated['lng'] ?? null,
             'estado' => 'Pendiente',
-            'ciudadano_id' => null, // Sin login, no hay usuario autenticado
-            // Guardar datos personales en un campo JSON
+            'ciudadano_id' => auth()->id(), // Asignar al usuario autenticado
             'datos_personales' => json_encode([
                 'nombre' => $validated['nombre'],
                 'apellido_paterno' => $validated['apellido_paterno'],
@@ -120,66 +121,23 @@ class SolicitudController extends Controller
             }
         }
 
-        return redirect()->route('solicitudes.index')
+        return redirect()->route('ciudadano.solicitudes.index')
             ->with('success', 'Solicitud enviada correctamente');
     }
 
     /**
-     * Mostrar solicitud específica
+     * Mostrar solicitud específica (solo si pertenece al usuario)
      */
     public function show(Solicitud $solicitud)
     {
+        // Verificar que la solicitud pertenece al usuario autenticado
+        if ($solicitud->ciudadano_id !== auth()->id()) {
+            abort(403, 'No tienes permiso para ver esta solicitud');
+        }
+
         $solicitud->load(['categoria', 'colonia', 'evidencias']);
         
-        return view('solicitudes.show', compact('solicitud'));
+        return view('ciudadano.solicitudes.show', compact('solicitud'));
     }
-
-    /**
-     * Panel de funcionarios (ruta separada, sin login)
-     */
-    public function funcionariosIndex(Request $request)
-    {
-        $solicitudes = Solicitud::with(['categoria', 'colonia', 'evidencias'])
-            ->when($request->estado, function($query, $estado) {
-                return $query->where('estado', $estado);
-            })
-            ->when($request->ciudadano, function($query, $ciudadano) {
-                $query->whereJsonContains('datos_personales->nombre', $ciudadano);
-            })
-            ->latest()
-            ->paginate(15);
-
-        return view('funcionarios.solicitudes', compact('solicitudes'));
-    }
-
-    /**
-     * Actualizar estado de solicitud (funcionarios)
-     */
-    public function updateEstado(Request $request, Solicitud $solicitud)
-    {
-        // Público: sin autorización de rol
-
-        $request->validate([
-            'estado' => 'required|in:Pendiente,En proceso,Resuelto,Rechazado'
-        ]);
-
-        $solicitud->update([
-            'estado' => $request->estado,
-        ]);
-
-        return back()->with('success', 'Estado actualizado correctamente');
-    }
-
-    /**
-     * Actualizar estado desde panel de funcionarios
-     */
-    public function funcionariosUpdateEstado(Request $request, Solicitud $solicitud)
-    {
-        return $this->updateEstado($request, $solicitud);
-    }
-
-    /**
-     * Autorizar que solo funcionarios puedan realizar ciertas acciones
-     */
-    protected function authorizeFuncionario() {}
 }
+

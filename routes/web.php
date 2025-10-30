@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\HomeController;
+// Eliminado: rutas/auth y controladores admin/ciudadano
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,16 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Ruta pública de inicio
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Rutas públicas del sistema de reportes
-Route::get('/solicitudes', [SolicitudController::class, 'index'])->name('solicitudes.index');
-Route::get('/solicitudes/crear', [SolicitudController::class, 'create'])->name('solicitudes.create');
-Route::post('/solicitudes', [SolicitudController::class, 'store'])->name('solicitudes.store');
-Route::get('/solicitudes/{solicitud}', [SolicitudController::class, 'show'])->name('solicitudes.show');
+// Panel de funcionarios (sin login, ruta separada)
+Route::prefix('funcionarios')->group(function () {
+    Route::get('/solicitudes', [SolicitudController::class, 'funcionariosIndex'])->name('funcionarios.solicitudes.index');
+    Route::patch('/solicitudes/{solicitud}/estado', [SolicitudController::class, 'funcionariosUpdateEstado'])->name('funcionarios.solicitudes.updateEstado');
+});
 
-// Panel de administración (público)
-Route::prefix('admin')->group(function () {
-    Route::get('/solicitudes', [SolicitudController::class, 'adminIndex'])->name('admin.solicitudes.index');
-    Route::patch('/solicitudes/{solicitud}/estado', [SolicitudController::class, 'updateEstado'])->name('admin.solicitudes.updateEstado');
+// Rutas públicas para ciudadanos (sin login requerido)
+Route::prefix('solicitudes')->group(function () {
+    Route::get('/', [SolicitudController::class, 'index'])->name('solicitudes.index');
+    Route::get('/crear', [SolicitudController::class, 'create'])->name('solicitudes.create');
+    Route::post('/', [SolicitudController::class, 'store'])->name('solicitudes.store');
+    Route::get('/{solicitud}', [SolicitudController::class, 'show'])->name('solicitudes.show');
 });

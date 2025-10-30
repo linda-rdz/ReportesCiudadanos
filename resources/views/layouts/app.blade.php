@@ -47,15 +47,25 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('solicitudes.index') }}">Solicitudes</a>
+                            <a class="nav-link" href="{{ route('solicitudes.index') }}">
+                                <i class="fas fa-list"></i> Ver Solicitudes
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('solicitudes.create') }}">Nueva Solicitud</a>
+                            <a class="nav-link" href="{{ route('solicitudes.create') }}">
+                                <i class="fas fa-plus"></i> Nueva Solicitud
+                            </a>
                         </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto"></ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('funcionarios.solicitudes.index') }}">
+                                <i class="fas fa-user-shield"></i> Panel de Funcionarios
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
