@@ -30,5 +30,6 @@ Route::prefix('solicitudes')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('solicitudes.index');
     Route::get('/crear', [SolicitudController::class, 'create'])->name('solicitudes.create');
     Route::post('/', [SolicitudController::class, 'store'])->name('solicitudes.store');
+    Route::get('/buscar', [SolicitudController::class, 'buscar'])->name('solicitudes.buscar');
     Route::get('/{solicitud}', [SolicitudController::class, 'show'])->name('solicitudes.show');
 });

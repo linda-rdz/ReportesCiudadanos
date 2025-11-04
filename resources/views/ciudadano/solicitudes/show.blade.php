@@ -43,7 +43,7 @@
                                         </li>
                                         <li class="mb-2">
                                             <strong><i class="fas fa-calendar text-info"></i> Fecha de reporte:</strong> 
-                                            {{ $solicitud->created_at->format('d/m/Y H:i') }}
+                                            {{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}
                                         </li>
                                     </ul>
                                 </div>
@@ -58,7 +58,7 @@
                                         <h5 class="mb-0">{{ $solicitud->estado }}</h5>
                                         @if($solicitud->updated_at != $solicitud->created_at)
                                             <hr>
-                                            <small><strong>Última actualización:</strong><br>{{ $solicitud->updated_at->format('d/m/Y H:i') }}</small>
+                                            <small><strong>Última actualización:</strong><br>{{ $solicitud->updated_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</small>
                                         @endif
                                     </div>
                                     

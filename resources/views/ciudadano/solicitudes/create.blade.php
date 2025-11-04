@@ -261,14 +261,13 @@
                                         </div>
 
                                         <div class="col-md-4 mb-3">
-                                            <label for="y_calle" class="form-label">Y calle *</label>
+                                            <label for="y_calle" class="form-label">Y calle (opcional)</label>
                                             <input type="text" 
                                                    class="form-control @error('y_calle') is-invalid @enderror" 
                                                    id="y_calle" 
                                                    name="y_calle" 
                                                    value="{{ old('y_calle') }}" 
-                                                   placeholder="Segunda calle de referencia"
-                                                   required>
+                                                   placeholder="Segunda calle de referencia">
                                             @error('y_calle')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

@@ -87,7 +87,7 @@
                                 <div class="row mt-1">
                                     <div class="col-md-12">
                                         <small class="text-muted">
-                                            <i class="fas fa-calendar"></i> <strong>Fecha:</strong> {{ $solicitud->created_at->format('d/m/Y H:i') }}
+                                            <i class="fas fa-calendar"></i> <strong>Fecha:</strong> {{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}
                                         </small>
                                     </div>
                                 </div>

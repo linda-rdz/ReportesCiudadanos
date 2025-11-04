@@ -70,7 +70,7 @@
                                         <td>{{ $solicitud->categoria->nombre ?? 'N/A' }}</td>
                                         <td>{{ Str::limit($solicitud->descripcion, 60) }}</td>
                                         <td>{{ $solicitud->colonia->nombre ?? 'N/A' }}</td>
-                                        <td>{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</td>
                                         <td>
                                             <form action="{{ route('funcionarios.solicitudes.updateEstado', $solicitud) }}" method="POST">
                                                 @csrf

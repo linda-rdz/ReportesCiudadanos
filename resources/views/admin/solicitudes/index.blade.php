@@ -135,7 +135,7 @@
                                                 N/A
                                             @endif
                                         </td>
-                                        <td>{{ $solicitud->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</td>
                                         <td>
                                             <form action="{{ route('admin.solicitudes.updateEstado', $solicitud) }}" method="POST">
                                                 @csrf

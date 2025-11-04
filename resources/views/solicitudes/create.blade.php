@@ -7,9 +7,9 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Reportar Problema Urbano</h4>
-                    <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="headerBackBtn">
                         <i class="fas fa-arrow-left me-1"></i>Volver
-                    </a>
+                    </button>
                 </div>
 
                 <div class="card-body">
@@ -107,12 +107,16 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <label for="fecha_nacimiento" class="form-label required">Fecha de nacimiento</label>
-                                            <input type="date" 
+                                            <input type="text" 
                                                    class="form-control @error('fecha_nacimiento') is-invalid @enderror" 
                                                    id="fecha_nacimiento" 
                                                    name="fecha_nacimiento" 
                                                    value="{{ old('fecha_nacimiento') }}" 
+                                                   placeholder="DD/MM/AAAA"
+                                                   maxlength="10"
+                                                   pattern="(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}"
                                                    required>
+                                            <small class="form-text text-muted"> </small>
                                             @error('fecha_nacimiento')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -142,7 +146,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="categoria_id" class="form-label">Asunto *</label>
+                                            <label for="categoria_id" class="form-label required">Asunto</label>
                                             <select class="form-select @error('categoria_id') is-invalid @enderror" 
                                                     id="categoria_id" 
                                                     name="categoria_id" 
@@ -162,7 +166,7 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="descripcion" class="form-label">Descripción del problema *</label>
+                                        <label for="descripcion" class="form-label required">Descripción del problema</label>
                                         <textarea class="form-control @error('descripcion') is-invalid @enderror" 
                                                   id="descripcion" 
                                                   name="descripcion" 
@@ -199,7 +203,7 @@
                                 <div class="section-content">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="colonia_id" class="form-label">Colonia *</label>
+                                            <label for="colonia_id" class="form-label required">Colonia</label>
                                             <select class="form-select @error('colonia_id') is-invalid @enderror" 
                                                     id="colonia_id" 
                                                     name="colonia_id" 
@@ -218,7 +222,7 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label for="direccion" class="form-label">Calle *</label>
+                                            <label for="direccion" class="form-label required">Calle</label>
                                             <input type="text" 
                                                    class="form-control @error('direccion') is-invalid @enderror" 
                                                    id="direccion" 
@@ -247,7 +251,7 @@
                                         </div>
 
                                         <div class="col-md-4 mb-3">
-                                            <label for="entre_calle" class="form-label">Entre calle *</label>
+                                            <label for="entre_calle" class="form-label required">Entre calle</label>
                                             <input type="text" 
                                                    class="form-control @error('entre_calle') is-invalid @enderror" 
                                                    id="entre_calle" 
@@ -261,14 +265,13 @@
                                         </div>
 
                                         <div class="col-md-4 mb-3">
-                                            <label for="y_calle" class="form-label">Y calle *</label>
+                                            <label for="y_calle" class="form-label">Y calle (opcional)</label>
                                             <input type="text" 
                                                    class="form-control @error('y_calle') is-invalid @enderror" 
                                                    id="y_calle" 
                                                    name="y_calle" 
                                                    value="{{ old('y_calle') }}" 
-                                                   placeholder="Segunda calle de referencia"
-                                                   required>
+                                                   placeholder="Segunda calle de referencia">
                                             @error('y_calle')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -316,9 +319,7 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                                <button type="button" class="btn btn-outline-secondary" id="prevStep">
-                                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                                </button>
+                            
                                 <div>
                                     <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
                                         Cancelar
@@ -340,10 +341,120 @@
 document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.getElementById('nextStep');
     const prevBtn = document.getElementById('prevStep');
+    const headerBackBtn = document.getElementById('headerBackBtn');
     const step1 = document.getElementById('step1');
     const step2 = document.getElementById('step2');
     const step1Indicator = document.getElementById('step1-indicator');
     const step2Indicator = document.getElementById('step2-indicator');
+    const fechaInput = document.getElementById('fecha_nacimiento');
+    
+    // Función para regresar al paso anterior
+    function goToPreviousStep() {
+        // Verificar si el paso 2 está visible usando getComputedStyle para mayor confiabilidad
+        const step2Display = window.getComputedStyle(step2).display;
+        const step2Visible = step2Display !== 'none';
+        
+        if (step2Visible) {
+            // Si estamos en el paso 2, regresar al paso 1
+            step2.style.display = 'none';
+            step1.style.display = 'block';
+            step2Indicator.classList.remove('active');
+            step1Indicator.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            // Si estamos en el paso 1, ir a home
+            window.location.href = "{{ route('home') }}";
+        }
+    }
+    
+    // Manejar el botón de volver del header
+    headerBackBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        goToPreviousStep();
+    });
+
+    // Formatear y validar fecha de nacimiento (DD/MM/YYYY)
+    if (fechaInput) {
+        fechaInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Solo números
+            
+            // Limitar a 8 dígitos (sin contar las barras)
+            if (value.length > 8) {
+                value = value.slice(0, 8);
+            }
+            
+            // Formatear automáticamente con barras
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            if (value.length >= 5) {
+                value = value.slice(0, 5) + '/' + value.slice(5, 9);
+            }
+            
+            e.target.value = value;
+            
+            // Validar fecha cuando se complete
+            if (value.length === 10) {
+                validarFecha(e.target);
+            }
+        });
+
+        fechaInput.addEventListener('blur', function(e) {
+            validarFecha(e.target);
+        });
+    }
+
+    function validarFecha(input) {
+        const fechaStr = input.value;
+        const fechaRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        const match = fechaStr.match(fechaRegex);
+        
+        if (!match) {
+            input.setCustomValidity('Formato inválido. Use DD/MM/YYYY');
+            input.classList.add('is-invalid');
+            return false;
+        }
+        
+        const dia = parseInt(match[1], 10);
+        const mes = parseInt(match[2], 10);
+        const anio = parseInt(match[3], 10);
+        const hoy = new Date();
+        const fechaMax = new Date(hoy.getFullYear() - 1, hoy.getMonth(), hoy.getDate());
+        const fechaMin = new Date(1900, 0, 1);
+        const fechaIngresada = new Date(anio, mes - 1, dia);
+        
+        // Validar rango de día
+        if (dia < 1 || dia > 31) {
+            input.setCustomValidity('El día debe estar entre 01 y 31');
+            input.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Validar rango de mes
+        if (mes < 1 || mes > 12) {
+            input.setCustomValidity('El mes debe estar entre 01 y 12');
+            input.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Validar si la fecha es válida (ej: no permitir 31/02/2003)
+        if (fechaIngresada.getDate() !== dia || fechaIngresada.getMonth() !== (mes - 1) || fechaIngresada.getFullYear() !== anio) {
+            input.setCustomValidity('Fecha inválida. Verifique día, mes y año');
+            input.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Validar que la fecha esté en el rango permitido (antes de hoy, después de 1900)
+        if (fechaIngresada > fechaMax || fechaIngresada < fechaMin) {
+            input.setCustomValidity('La fecha debe ser anterior a hoy y posterior a 01/01/1900');
+            input.classList.add('is-invalid');
+            return false;
+        }
+        
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+        return true;
+    }
 
     nextBtn.addEventListener('click', function() {
         // Validar campos del paso 1
@@ -359,22 +470,49 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Validar fecha de nacimiento específicamente
+        if (fechaInput && fechaInput.value.length === 10) {
+            if (!validarFecha(fechaInput)) {
+                isValid = false;
+                alert('Por favor ingrese una fecha de nacimiento válida en formato DD/MM/YYYY');
+            }
+        } else if (fechaInput && fechaInput.value.trim() !== '') {
+            fechaInput.classList.add('is-invalid');
+            isValid = false;
+            alert('La fecha de nacimiento debe tener el formato DD/MM/YYYY (ejemplo: 06/01/2003)');
+        }
+
         if (isValid) {
             step1.style.display = 'none';
             step2.style.display = 'block';
             step1Indicator.classList.remove('active');
             step2Indicator.classList.add('active');
+            // Hacer scroll hacia arriba para mostrar el inicio del paso 2 (Ubicación del Reporte)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            alert('Por favor completa todos los campos requeridos antes de continuar.');
+            alert('Por favor completa todos los campos requeridos correctamente antes de continuar.');
         }
     });
 
-    prevBtn.addEventListener('click', function() {
-        step2.style.display = 'none';
-        step1.style.display = 'block';
-        step2Indicator.classList.remove('active');
-        step1Indicator.classList.add('active');
+    prevBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        goToPreviousStep();
     });
 });
 </script>
+
+<style>
+/* Asegurar que solo haya un asterisco en campos requeridos */
+.form-label.required::after {
+    content: ' *';
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Eliminar asteriscos duplicados si existen en el texto */
+.form-label.required {
+    position: relative;
+}
+
+</style>
 @endsection

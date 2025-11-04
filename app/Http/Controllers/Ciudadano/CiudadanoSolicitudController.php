@@ -79,7 +79,7 @@ class CiudadanoSolicitudController extends Controller
             'direccion' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:20',
             'entre_calle' => 'required|string|max:255',
-            'y_calle' => 'required|string|max:255',
+            'y_calle' => 'nullable|string|max:255',
             'referencias' => 'nullable|string|max:500',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
@@ -87,6 +87,7 @@ class CiudadanoSolicitudController extends Controller
         ]);
 
         $solicitud = Solicitud::create([
+            'folio' => Solicitud::generarFolio(),
             'titulo' => $validated['descripcion'],
             'descripcion' => $validated['descripcion'],
             'categoria_id' => $validated['categoria_id'],

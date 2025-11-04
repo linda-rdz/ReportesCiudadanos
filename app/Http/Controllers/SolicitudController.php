@@ -13,19 +13,17 @@ class SolicitudController extends Controller
 {
     /**
      * Mostrar listado de solicitudes
+     * Redirige a la página de búsqueda por folio para ciudadanos
      */
     public function index(Request $request)
     {
-        $query = Solicitud::with(['categoria', 'colonia', 'evidencias']);
-        
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+        // Si viene con un folio (después de crear), redirigir a buscar
+        if ($request->has('folio')) {
+            return redirect()->route('solicitudes.buscar', ['folio' => $request->folio]);
         }
         
-        $solicitudes = $query->latest()->paginate(10);
-        
-        return view('solicitudes.index', compact('solicitudes'));
+        // Para ciudadanos públicos, redirigir a la página de búsqueda
+        return redirect()->route('solicitudes.buscar');
     }
 
     /**
@@ -64,7 +62,7 @@ class SolicitudController extends Controller
                 'nullable', 'string', 'min:2', 'max:100',
                 'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
             ],
-            'fecha_nacimiento' => ['required', 'date', 'before:today', 'after:1900-01-01'],
+            'fecha_nacimiento' => ['required', 'date_format:d/m/Y', 'before:today', 'after:01/01/1900'],
             'celular' => ['required', 'string', 'regex:/^\+?[0-9\s-]{10,15}$/'],
             'email' => 'nullable|email|max:255',
             
@@ -77,7 +75,7 @@ class SolicitudController extends Controller
             'direccion' => 'required|string|max:255',
             'numero_exterior' => 'nullable|string|max:20',
             'entre_calle' => 'required|string|max:255',
-            'y_calle' => 'required|string|max:255',
+            'y_calle' => 'nullable|string|max:255',
             'referencias' => 'nullable|string|max:500',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
@@ -85,6 +83,7 @@ class SolicitudController extends Controller
         ]);
 
         $solicitud = Solicitud::create([
+            'folio' => Solicitud::generarFolio(),
             'titulo' => $validated['descripcion'], // Usar descripción como título
             'descripcion' => $validated['descripcion'],
             'categoria_id' => $validated['categoria_id'],
@@ -120,8 +119,9 @@ class SolicitudController extends Controller
             }
         }
 
-        return redirect()->route('solicitudes.index')
-            ->with('success', 'Solicitud enviada correctamente');
+        return redirect()->route('home')
+            ->with('success', 'Solicitud enviada correctamente')
+            ->with('folio', $solicitud->folio);
     }
 
     /**
@@ -176,6 +176,23 @@ class SolicitudController extends Controller
     public function funcionariosUpdateEstado(Request $request, Solicitud $solicitud)
     {
         return $this->updateEstado($request, $solicitud);
+    }
+
+    /**
+     * Buscar solicitud por folio
+     */
+    public function buscar(Request $request)
+    {
+        $solicitud = null;
+        $folio = $request->input('folio');
+
+        if ($folio) {
+            $solicitud = Solicitud::with(['categoria', 'colonia', 'evidencias'])
+                ->where('folio', strtoupper(trim($folio)))
+                ->first();
+        }
+
+        return view('solicitudes.buscar', compact('solicitud', 'folio'));
     }
 
     /**

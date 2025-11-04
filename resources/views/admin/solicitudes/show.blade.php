@@ -57,7 +57,7 @@
                         </div>
                         <div class="col-md-6">
                             <h5><i class="fas fa-calendar"></i> Fecha de Creación</h5>
-                            <p class="fs-6">{{ $solicitud->created_at->format('d/m/Y H:i:s') }}</p>
+                            <p class="fs-6">{{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i:s') }}</p>
                         </div>
                     </div>
 

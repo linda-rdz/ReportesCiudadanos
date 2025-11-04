@@ -27,10 +27,13 @@
                                 <div class="col-md-6">
                                     <h6>Información general</h6>
                                     <ul class="list-unstyled">
+                                        @if($solicitud->folio)
+                                            <li><strong>Folio:</strong> <span class="badge bg-primary">{{ $solicitud->folio }}</span></li>
+                                        @endif
                                         <li><strong>Categoría:</strong> {{ $solicitud->categoria->nombre ?? 'N/A' }}</li>
                                         <li><strong>Colonia:</strong> {{ $solicitud->colonia->nombre ?? 'N/A' }}</li>
                                         <li><strong>Dirección:</strong> {{ $solicitud->direccion ?: 'No especificada' }}</li>
-                                        <li><strong>Fecha de reporte:</strong> {{ $solicitud->created_at->format('d/m/Y H:i') }}</li>
+                                        <li><strong>Fecha de reporte:</strong> {{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</li>
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
@@ -38,7 +41,7 @@
                                     <ul class="list-unstyled">
                                         <li><strong>Estado:</strong> {{ $solicitud->estado }}</li>
                                         @if($solicitud->updated_at != $solicitud->created_at)
-                                            <li><strong>Última actualización:</strong> {{ $solicitud->updated_at->format('d/m/Y H:i') }}</li>
+                                            <li><strong>Última actualización:</strong> {{ $solicitud->updated_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</li>
                                         @endif
                                     </ul>
                                 </div>

@@ -7,15 +7,40 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Solicitudes</h4>
-                    <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nueva Solicitud
-                    </a>
+                    <div>
+                        <a href="{{ route('solicitudes.buscar') }}" class="btn btn-outline-info me-2">
+                            <i class="fas fa-search"></i> Buscar por Folio
+                        </a>
+                        <a href="{{ route('solicitudes.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nueva Solicitud
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body">
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2 fs-5"></i>
+                                <div>
+                                    <strong>{{ session('success') }}</strong>
+                                    @if(session('folio'))
+                                        <div class="mt-2">
+                                            <p class="mb-1">Tu folio de seguimiento es:</p>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-primary fs-6 px-3 py-2">{{ session('folio') }}</span>
+                                                <a href="{{ route('solicitudes.buscar', ['folio' => session('folio')]) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-search me-1"></i>Consultar estado
+                                                </a>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Guarda este folio para consultar el estado de tu solicitud en cualquier momento.
+                                            </small>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     @endif
@@ -41,6 +66,11 @@
                                 <div class="row">
                                     <div class="col-md-8">
                                         <h5 class="card-title">{{ $solicitud->titulo }}</h5>
+                                        @if($solicitud->folio)
+                                            <p class="mb-2">
+                                                <span class="badge bg-secondary">Folio: {{ $solicitud->folio }}</span>
+                                            </p>
+                                        @endif
                                         <p class="card-text">{{ Str::limit($solicitud->descripcion, 150) }}</p>
                                         <div class="row">
                                             <div class="col-md-6">
@@ -57,7 +87,7 @@
                                         <div class="row mt-2">
                                             <div class="col-md-6">
                                                 <small class="text-muted">
-                                                    <strong>Fecha:</strong> {{ $solicitud->created_at->format('d/m/Y H:i') }}
+                                                    <strong>Fecha:</strong> {{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}
                                                 </small>
                                             </div>
                                             <div class="col-md-6">
