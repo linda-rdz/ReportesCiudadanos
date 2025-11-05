@@ -52,18 +52,21 @@ class SolicitudController extends Controller
             // Datos personales
             'nombre' => [
                 'required', 'string', 'min:2', 'max:100',
-                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
+                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u',
+                'not_regex:/[0-9]/' // No permitir números
             ],
             'apellido_paterno' => [
                 'required', 'string', 'min:2', 'max:100',
-                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
+                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u',
+                'not_regex:/[0-9]/' // No permitir números
             ],
             'apellido_materno' => [
                 'nullable', 'string', 'min:2', 'max:100',
-                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
+                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u',
+                'not_regex:/[0-9]/' // No permitir números
             ],
             'fecha_nacimiento' => ['required', 'date_format:d/m/Y', 'before:today', 'after:01/01/1900'],
-            'celular' => ['required', 'string', 'regex:/^\+?[0-9\s-]{10,15}$/'],
+            'celular' => ['required', 'string', 'regex:/^[0-9]{10}$/'], // Solo números, exactamente 10 dígitos
             'email' => 'nullable|email|max:255',
             
             // Información del reporte
@@ -135,50 +138,6 @@ class SolicitudController extends Controller
     }
 
     /**
-     * Panel de funcionarios (ruta separada, sin login)
-     */
-    public function funcionariosIndex(Request $request)
-    {
-        $solicitudes = Solicitud::with(['categoria', 'colonia', 'evidencias'])
-            ->when($request->estado, function($query, $estado) {
-                return $query->where('estado', $estado);
-            })
-            ->when($request->ciudadano, function($query, $ciudadano) {
-                $query->whereJsonContains('datos_personales->nombre', $ciudadano);
-            })
-            ->latest()
-            ->paginate(15);
-
-        return view('funcionarios.solicitudes', compact('solicitudes'));
-    }
-
-    /**
-     * Actualizar estado de solicitud (funcionarios)
-     */
-    public function updateEstado(Request $request, Solicitud $solicitud)
-    {
-        // Público: sin autorización de rol
-
-        $request->validate([
-            'estado' => 'required|in:Pendiente,En proceso,Resuelto,Rechazado'
-        ]);
-
-        $solicitud->update([
-            'estado' => $request->estado,
-        ]);
-
-        return back()->with('success', 'Estado actualizado correctamente');
-    }
-
-    /**
-     * Actualizar estado desde panel de funcionarios
-     */
-    public function funcionariosUpdateEstado(Request $request, Solicitud $solicitud)
-    {
-        return $this->updateEstado($request, $solicitud);
-    }
-
-    /**
      * Buscar solicitud por folio
      */
     public function buscar(Request $request)
@@ -194,9 +153,4 @@ class SolicitudController extends Controller
 
         return view('solicitudes.buscar', compact('solicitud', 'folio'));
     }
-
-    /**
-     * Autorizar que solo funcionarios puedan realizar ciertas acciones
-     */
-    protected function authorizeFuncionario() {}
 }

@@ -60,11 +60,6 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('funcionarios.solicitudes.index') }}">
-                                <i class="fas fa-user-shield"></i> Panel de Funcionarios
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>

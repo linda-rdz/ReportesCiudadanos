@@ -64,6 +64,7 @@
                                                    minlength="2"
                                                    maxlength="100"
                                                    pattern="^[\p{L}\s'.ÁÉÍÓÚÜÑáéíóúüñ-]+$"
+                                                   onkeypress="return soloLetras(event)"
                                                    required>
                                             @error('nombre')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -81,6 +82,7 @@
                                                    minlength="2"
                                                    maxlength="100"
                                                    pattern="^[\p{L}\s'.ÁÉÍÓÚÜÑáéíóúüñ-]+$"
+                                                   onkeypress="return soloLetras(event)"
                                                    required>
                                             @error('apellido_paterno')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -97,7 +99,8 @@
                                                    placeholder="Apellido materno (opcional)"
                                                    minlength="2"
                                                    maxlength="100"
-                                                   pattern="^[\p{L}\s'.ÁÉÍÓÚÜÑáéíóúüñ-]+$">
+                                                   pattern="^[\p{L}\s'.ÁÉÍÓÚÜÑáéíóúüñ-]+$"
+                                                   onkeypress="return soloLetras(event)">
                                             @error('apellido_materno')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -125,9 +128,13 @@
                                                    id="celular" 
                                                    name="celular" 
                                                    value="{{ old('celular') }}" 
-                                                   placeholder="Número de celular"
-                                                   pattern="^\+?[0-9\s-]{10,15}$"
+                                                   placeholder="1234567890"
+                                                   pattern="^[0-9]{10}$"
+                                                   maxlength="10"
+                                                   onkeypress="return soloNumeros(event)"
+                                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                    required>
+                                            <small class="form-text text-muted">Ingresa exactamente 10 dígitos (solo números)</small>
                                             @error('celular')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -343,6 +350,65 @@ document.addEventListener('DOMContentLoaded', function() {
     const step2 = document.getElementById('step2');
     const step1Indicator = document.getElementById('step1-indicator');
     const step2Indicator = document.getElementById('step2-indicator');
+
+    // Función para permitir solo letras (incluyendo acentos y espacios)
+    window.soloLetras = function(event) {
+        const char = String.fromCharCode(event.which || event.keyCode);
+        const regex = /^[\p{L}\s'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u;
+        // Permitir teclas especiales: Backspace, Delete, Tab, Enter, etc.
+        if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9 || event.keyCode === 27 || 
+            event.keyCode === 13 || (event.keyCode === 65 && event.ctrlKey === true) || 
+            (event.keyCode >= 35 && event.keyCode <= 40)) {
+            return true;
+        }
+        // Permitir espacios y caracteres especiales permitidos
+        if (char === ' ' || char === '.' || char === "'" || char === '-') {
+            return true;
+        }
+        // Verificar si es una letra (incluyendo acentos)
+        if (!regex.test(char)) {
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    };
+
+    // Función para permitir solo números
+    window.soloNumeros = function(event) {
+        const char = String.fromCharCode(event.which || event.keyCode);
+        // Permitir teclas especiales: Backspace, Delete, Tab, Enter, etc.
+        if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9 || event.keyCode === 27 || 
+            event.keyCode === 13 || (event.keyCode === 65 && event.ctrlKey === true) || 
+            (event.keyCode >= 35 && event.keyCode <= 40)) {
+            return true;
+        }
+        // Solo permitir números
+        if (char < '0' || char > '9') {
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    };
+
+    // Validación adicional para el campo celular
+    const celularInput = document.getElementById('celular');
+    if (celularInput) {
+        celularInput.addEventListener('input', function(e) {
+            // Eliminar cualquier carácter que no sea número
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            // Limitar a 10 dígitos
+            if (e.target.value.length > 10) {
+                e.target.value = e.target.value.slice(0, 10);
+            }
+        });
+
+        celularInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numbersOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+            e.target.value = numbersOnly;
+        });
+    }
 
     nextBtn.addEventListener('click', function() {
         // Validar campos del paso 1

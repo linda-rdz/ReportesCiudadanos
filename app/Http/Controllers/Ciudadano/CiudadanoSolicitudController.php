@@ -56,18 +56,21 @@ class CiudadanoSolicitudController extends Controller
             // Datos personales
             'nombre' => [
                 'required', 'string', 'min:2', 'max:100',
-                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
+                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u',
+                'not_regex:/[0-9]/' // No permitir números
             ],
             'apellido_paterno' => [
                 'required', 'string', 'min:2', 'max:100',
-                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
+                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u',
+                'not_regex:/[0-9]/' // No permitir números
             ],
             'apellido_materno' => [
                 'nullable', 'string', 'min:2', 'max:100',
-                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u'
+                'regex:/^[\pL\s\'.ÁÉÍÓÚÜÑáéíóúüñ-]+$/u',
+                'not_regex:/[0-9]/' // No permitir números
             ],
             'fecha_nacimiento' => ['required', 'date', 'before:today', 'after:1900-01-01'],
-            'celular' => ['required', 'string', 'regex:/^\+?[0-9\s-]{10,15}$/'],
+            'celular' => ['required', 'string', 'regex:/^[0-9]{10}$/'], // Solo números, exactamente 10 dígitos
             'email' => 'nullable|email|max:255',
             
             // Información del reporte

@@ -19,12 +19,6 @@ use Illuminate\Support\Facades\Route;
 // Ruta pública de inicio
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Panel de funcionarios (sin login, ruta separada)
-Route::prefix('funcionarios')->group(function () {
-    Route::get('/solicitudes', [SolicitudController::class, 'funcionariosIndex'])->name('funcionarios.solicitudes.index');
-    Route::patch('/solicitudes/{solicitud}/estado', [SolicitudController::class, 'funcionariosUpdateEstado'])->name('funcionarios.solicitudes.updateEstado');
-});
-
 // Rutas públicas para ciudadanos (sin login requerido)
 Route::prefix('solicitudes')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('solicitudes.index');
