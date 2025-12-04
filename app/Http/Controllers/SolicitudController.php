@@ -8,6 +8,7 @@ use App\Models\Colonia;
 use App\Models\Evidencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SolicitudController extends Controller
 {
@@ -31,7 +32,8 @@ class SolicitudController extends Controller
      */
     public function create(Request $request)
     {
-        $categorias = Categoria::orderBy('nombre')->get();
+        Categoria::firstOrCreate(['nombre' => 'OTRO']);
+        $categorias = Categoria::orderByRaw("CASE WHEN nombre = 'OTRO' THEN 1 ELSE 0 END, nombre")->get();
         $colonias = Colonia::orderBy('nombre')->get();
         
         // Si viene una categoría seleccionada, precargarla
@@ -75,14 +77,14 @@ class SolicitudController extends Controller
             
             // Ubicación
             'colonia_id' => 'required|exists:colonias,id',
-            'direccion' => 'required|string|max:255',
+            'direccion' => 'nullable|string|max:255',
             'numero_exterior' => 'nullable|string|max:20',
-            'entre_calle' => 'required|string|max:255',
+            'entre_calle' => 'nullable|string|max:255',
             'y_calle' => 'nullable|string|max:255',
             'referencias' => 'nullable|string|max:500',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
-            'evidencias.*' => 'nullable|image|max:10240' // 10MB
+            'evidencias.*' => 'nullable|image|max:10240'
         ]);
 
         $solicitud = Solicitud::create([
@@ -96,8 +98,8 @@ class SolicitudController extends Controller
             'lng' => $validated['lng'] ?? null,
             'estado' => 'Pendiente',
             'ciudadano_id' => null, // Sin login, no hay usuario autenticado
-            // Guardar datos personales en un campo JSON
-            'datos_personales' => json_encode([
+            // Guardar datos personales como array (Laravel los serializa a JSON por el cast)
+            'datos_personales' => [
                 'nombre' => $validated['nombre'],
                 'apellido_paterno' => $validated['apellido_paterno'],
                 'apellido_materno' => $validated['apellido_materno'],
@@ -108,16 +110,56 @@ class SolicitudController extends Controller
                 'entre_calle' => $validated['entre_calle'],
                 'y_calle' => $validated['y_calle'],
                 'referencias' => $validated['referencias'],
-            ]),
+            ],
         ]);
 
         // Guardar evidencias si existen
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
-                $path = $file->store('evidencias', 'public');
+                if (!$file->isValid()) {
+                    continue;
+                }
+                $data = @file_get_contents($file->getRealPath());
+                if (!\function_exists('imagecreatefromstring')) {
+                    $path = $file->store('evidencias', 'public');
+                    Evidencia::create([
+                        'solicitud_id' => $solicitud->id,
+                        'ruta_archivo' => $path,
+                    ]);
+                    continue;
+                }
+                $img = @\imagecreatefromstring($data);
+                if ($img === false) {
+                    $path = $file->store('evidencias', 'public');
+                    Evidencia::create([
+                        'solicitud_id' => $solicitud->id,
+                        'ruta_archivo' => $path,
+                    ]);
+                    continue;
+                }
+                $uuid = Str::uuid()->toString();
+                $mainPath = 'evidencias/' . $uuid . '.jpg';
+                ob_start();
+                \imagejpeg($img, null, 85);
+                $jpeg = ob_get_clean();
+                Storage::disk('public')->put($mainPath, $jpeg);
+                $w = \imagesx($img);
+                $h = \imagesy($img);
+                $ratio = min(400 / max($w, 1), 400 / max($h, 1));
+                $tw = max((int)($w * $ratio), 1);
+                $th = max((int)($h * $ratio), 1);
+                $thumb = \imagecreatetruecolor($tw, $th);
+                \imagecopyresampled($thumb, $img, 0, 0, 0, 0, $tw, $th, $w, $h);
+                ob_start();
+                \imagejpeg($thumb, null, 80);
+                $thumbJpeg = ob_get_clean();
+                $thumbPath = 'evidencias/thumbs/' . $uuid . '.jpg';
+                Storage::disk('public')->put($thumbPath, $thumbJpeg);
+                \imagedestroy($img);
+                \imagedestroy($thumb);
                 Evidencia::create([
                     'solicitud_id' => $solicitud->id,
-                    'ruta_archivo' => $path,
+                    'ruta_archivo' => $mainPath,
                 ]);
             }
         }
@@ -132,7 +174,7 @@ class SolicitudController extends Controller
      */
     public function show(Solicitud $solicitud)
     {
-        $solicitud->load(['categoria', 'colonia', 'evidencias']);
+        $solicitud->load(['categoria', 'colonia', 'evidencias', 'mensajes']);
         
         return view('solicitudes.show', compact('solicitud'));
     }
@@ -144,13 +186,13 @@ class SolicitudController extends Controller
     {
         $solicitud = null;
         $folio = $request->input('folio');
-
-        if ($folio) {
-            $solicitud = Solicitud::with(['categoria', 'colonia', 'evidencias'])
+        $telefono = $request->input('telefono');
+        if ($folio && $telefono) {
+            $solicitud = Solicitud::with(['categoria', 'colonia', 'evidencias', 'mensajes'])
                 ->where('folio', strtoupper(trim($folio)))
+                ->where('datos_personales->celular', preg_replace('/\D/', '', $telefono))
                 ->first();
         }
-
-        return view('solicitudes.buscar', compact('solicitud', 'folio'));
+        return view('solicitudes.buscar', compact('solicitud', 'folio', 'telefono'));
     }
 }

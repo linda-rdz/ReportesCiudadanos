@@ -21,7 +21,8 @@ class CheckRole
             return redirect()->route('login')->with('error', 'Debes iniciar sesión');
         }
 
-        if (auth()->user()->role !== $role) {
+        $currentRole = auth()->user()->role ?? (auth()->user()->rol ?? null);
+        if ($currentRole !== $role) {
             abort(403, 'No tienes permisos para acceder a esta sección');
         }
 

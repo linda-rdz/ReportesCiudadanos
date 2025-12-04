@@ -22,12 +22,11 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // Redirigir según el rol del usuario
-                if (auth()->user()->role === 'admin') {
+                $role = auth()->user()->role ?? (auth()->user()->rol ?? null);
+                if ($role === 'admin') {
                     return redirect()->route('admin.solicitudes.index');
                 }
-                
-                return redirect()->route('ciudadano.solicitudes.index');
+                return redirect()->route('solicitudes.index');
             }
         }
 

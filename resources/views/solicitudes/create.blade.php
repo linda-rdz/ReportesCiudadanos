@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Reportar Problema Urbano</h4>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="headerBackBtn">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="headerBackBtn">
                         <i class="fas fa-arrow-left me-1"></i>Volver
                     </button>
                 </div>
@@ -229,14 +229,13 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label for="direccion" class="form-label required">Calle</label>
+                                            <label for="direccion" class="form-label">Calle</label>
                                             <input type="text" 
                                                    class="form-control @error('direccion') is-invalid @enderror" 
                                                    id="direccion" 
                                                    name="direccion" 
                                                    value="{{ old('direccion') }}" 
-                                                   placeholder="Nombre de la calle"
-                                                   required>
+                                                   placeholder="Nombre de la calle">
                                             @error('direccion')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -258,14 +257,13 @@
                                         </div>
 
                                         <div class="col-md-4 mb-3">
-                                            <label for="entre_calle" class="form-label required">Entre calle</label>
+                                            <label for="entre_calle" class="form-label">Entre calle</label>
                                             <input type="text" 
                                                    class="form-control @error('entre_calle') is-invalid @enderror" 
                                                    id="entre_calle" 
                                                    name="entre_calle" 
                                                    value="{{ old('entre_calle') }}" 
-                                                   placeholder="Primera calle de referencia"
-                                                   required>
+                                                   placeholder="Primera calle de referencia">
                                             @error('entre_calle')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -582,3 +580,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </style>
 @endsection
+

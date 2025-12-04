@@ -21,7 +21,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <h5><i class="fas fa-align-left"></i> Descripción del problema</h5>
-                            <p class="text-muted">{{ $solicitud->descripcion }}</p>
+                            <p class="text-muted">{{ \Illuminate\Support\Str::limit($solicitud->descripcion, 50) }}</p>
 
                             <hr>
 
@@ -38,13 +38,23 @@
                                             {{ $solicitud->colonia->nombre ?? 'N/A' }}
                                         </li>
                                         <li class="mb-2">
-                                            <strong><i class="fas fa-home text-success"></i> Dirección:</strong> 
+                                            <strong><i class="fas fa-home text-primary"></i> Dirección:</strong> 
                                             {{ $solicitud->direccion ?: 'No especificada' }}
                                         </li>
                                         <li class="mb-2">
                                             <strong><i class="fas fa-calendar text-info"></i> Fecha de reporte:</strong> 
                                             {{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}
                                         </li>
+                                        @if($solicitud->datos_personales)
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-user text-secondary"></i> Nombre del ciudadano:</strong>
+                                            {{ $solicitud->datos_personales['nombre'] ?? '' }} {{ $solicitud->datos_personales['apellido_paterno'] ?? '' }} {{ $solicitud->datos_personales['apellido_materno'] ?? '' }}
+                                        </li>
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-phone text-secondary"></i> Celular:</strong>
+                                            {{ $solicitud->datos_personales['celular'] ?? '' }}
+                                        </li>
+                                        @endif
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
@@ -81,11 +91,12 @@
                                 <div class="row">
                                     @foreach($solicitud->evidencias as $evidencia)
                                         <div class="col-12 mb-2">
-                                            <img src="{{ asset('storage/' . $evidencia->ruta_archivo) }}" 
+                                            <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
                                                  class="img-fluid rounded shadow-sm" 
                                                  style="max-height: 200px; width: 100%; object-fit: cover; cursor: pointer;"
-                                                 data-bs-toggle="modal" 
-                                                 data-bs-target="#imageModal"
+                                                  data-bs-toggle="modal" 
+                                                  data-bs-target="#imageModal"
+                                                 onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'" 
                                                  onclick="showImage('{{ asset('storage/' . $evidencia->ruta_archivo) }}')">
                                         </div>
                                     @endforeach

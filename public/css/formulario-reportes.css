@@ -63,7 +63,7 @@
 }
 
 /* Estilos para campos requeridos */
-.form-label:after {
+.form-label.required:after {
     content: " *";
     color: #dc3545;
     font-weight: bold;
@@ -99,6 +99,24 @@
     background-color: #6c757d;
     border-color: #6c757d;
     transform: translateY(-2px);
+}
+
+/* Estilos para botón Volver (outline-primary) */
+.btn-outline-primary {
+    border: 2px solid #007bff;
+    color: #007bff;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 
 /* Estilos para mensajes de error */
@@ -161,11 +179,11 @@
 
 /* Estilos para el progreso visual */
 .form-section:nth-child(1) .section-header {
-    border-bottom-color: #28a745;
+    border-bottom-color: #007bff;
 }
 
 .form-section:nth-child(1) .section-title {
-    color: #28a745;
+    color: #007bff;
 }
 
 .form-section:nth-child(2) .section-header {
@@ -297,6 +315,7 @@ textarea.form-control {
     background: rgba(255, 255, 255, 0.3);
 }
 
+
 .step-line {
     width: 60px;
     height: 3px;
@@ -378,4 +397,9 @@ h6.text-primary {
         height: 25px;
         font-size: 0.8rem;
     }
+}
+/* Logo en header de login */
+.login-logo {
+    max-height: 64px;
+    width: auto;
 }

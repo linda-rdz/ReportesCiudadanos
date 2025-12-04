@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
+use App\Models\Mensaje;
 use App\Models\Categoria;
 use App\Models\Colonia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminSolicitudController extends Controller
 {
@@ -16,7 +18,7 @@ class AdminSolicitudController extends Controller
     public function index(Request $request)
     {
         // Verificar que sea administrador
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check() || (method_exists(auth()->user(), 'isAdmin') ? !auth()->user()->isAdmin() : (auth()->user()->rol ?? auth()->user()->role ?? null) !== 'admin')) {
             return redirect()->route('login')->with('error', 'Acceso denegado. Solo administradores.');
         }
         $query = Solicitud::with(['categoria', 'colonia', 'evidencias']);
@@ -60,12 +62,41 @@ class AdminSolicitudController extends Controller
     public function show(Solicitud $solicitud)
     {
         // Verificar que sea administrador
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check() || (method_exists(auth()->user(), 'isAdmin') ? !auth()->user()->isAdmin() : (auth()->user()->rol ?? auth()->user()->role ?? null) !== 'admin')) {
             return redirect()->route('login')->with('error', 'Acceso denegado. Solo administradores.');
         }
-        $solicitud->load(['categoria', 'colonia', 'evidencias']);
+        $solicitud->load(['categoria', 'colonia', 'evidencias', 'mensajes.admin']);
         
         return view('admin.solicitudes.show', compact('solicitud'));
+    }
+
+    /**
+     * Eliminar una solicitud y sus recursos asociados
+     */
+    public function destroy(Solicitud $solicitud)
+    {
+        if (!auth()->check() || (method_exists(auth()->user(), 'isAdmin') ? !auth()->user()->isAdmin() : (auth()->user()->rol ?? null) !== 'admin')) {
+            return redirect()->route('login')->with('error', 'Acceso denegado. Solo administradores.');
+        }
+
+        $solicitud->load('evidencias', 'mensajes');
+
+        foreach ($solicitud->evidencias as $evidencia) {
+            $path = $evidencia->ruta_archivo;
+            $thumb = preg_replace('#^evidencias/#', 'evidencias/thumbs/', $path);
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
+            if ($thumb) {
+                Storage::disk('public')->delete($thumb);
+            }
+        }
+
+        $solicitud->mensajes()->delete();
+        $solicitud->evidencias()->delete();
+        $solicitud->delete();
+
+        return back()->with('success', 'Solicitud eliminada correctamente');
     }
 
     /**
@@ -74,7 +105,7 @@ class AdminSolicitudController extends Controller
     public function updateEstado(Request $request, Solicitud $solicitud)
     {
         // Verificar que sea administrador
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check() || (method_exists(auth()->user(), 'isAdmin') ? !auth()->user()->isAdmin() : (auth()->user()->rol ?? null) !== 'admin')) {
             return redirect()->route('login')->with('error', 'Acceso denegado. Solo administradores.');
         }
         $request->validate([
@@ -87,6 +118,26 @@ class AdminSolicitudController extends Controller
         ]);
 
         return back()->with('success', 'Estado actualizado correctamente');
+    }
+
+    public function storeMensaje(Request $request, Solicitud $solicitud)
+    {
+        if (!auth()->check() || (method_exists(auth()->user(), 'isAdmin') ? !auth()->user()->isAdmin() : (auth()->user()->rol ?? null) !== 'admin')) {
+            return redirect()->route('login')->with('error', 'Acceso denegado. Solo administradores.');
+        }
+        $validated = $request->validate([
+            'contenido' => 'required|string|max:2000',
+            'tipo' => 'nullable|string|max:50'
+        ]);
+
+        Mensaje::create([
+            'solicitud_id' => $solicitud->id,
+            'user_id' => auth()->id(),
+            'contenido' => $validated['contenido'],
+            'tipo' => $validated['tipo'] ?? 'estado',
+        ]);
+
+        return back()->with('success', 'Mensaje enviado al ciudadano');
     }
 }
 

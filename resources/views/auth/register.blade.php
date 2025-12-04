@@ -6,35 +6,35 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0">Registro de Ciudadano</h4>
+                    <h4 class="mb-0">Registro de Administrador</h4>
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
                         
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nombre Completo</label>
+                            <label for="nombre" class="form-label">Nombre Completo</label>
                             <input type="text" 
-                                   class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" 
-                                   name="name" 
-                                   value="{{ old('name') }}" 
+                                   class="form-control @error('nombre') is-invalid @enderror" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   value="{{ old('nombre') }}" 
                                    required 
                                    autofocus>
-                            @error('name')
+                            @error('nombre')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" 
-                                   class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" 
-                                   name="email" 
-                                   value="{{ old('email') }}" 
+                            <label for="numero_empleado" class="form-label">Número de Empleado</label>
+                            <input type="text" 
+                                   class="form-control @error('numero_empleado') is-invalid @enderror" 
+                                   id="numero_empleado" 
+                                   name="numero_empleado" 
+                                   value="{{ old('numero_empleado') }}" 
                                    required>
-                            @error('email')
+                            @error('numero_empleado')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -69,6 +69,7 @@
                     <hr class="my-4">
                     
                     <div class="text-center">
+                        <p class="mb-0">Este registro es exclusivo para administradores.</p>
                         <p class="mb-0">¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia sesión aquí</a></p>
                     </div>
                 </div>

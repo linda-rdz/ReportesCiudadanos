@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Empleado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -18,21 +18,22 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'nombre' => 'required|string|max:255',
+            'numero_empleado' => 'required|string|max:50|unique:empleados,numero_empleado',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => 'ciudadano', // Por defecto todos son ciudadanos
+        $empleado = Empleado::create([
+            'nombre' => $validated['nombre'],
+            'numero_empleado' => $validated['numero_empleado'],
+            'contrasena_hash' => Hash::make($validated['password']),
+            'rol' => 'admin',
+            'estado' => 'activo',
         ]);
 
-        Auth::login($user);
+        Auth::guard('admin')->login($empleado);
 
-        return redirect()->route('ciudadano.solicitudes.index');
+        return redirect()->route('admin.solicitudes.index');
     }
 }
 

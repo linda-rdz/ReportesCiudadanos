@@ -97,7 +97,7 @@
                                                    name="apellido_materno" 
                                                    value="{{ old('apellido_materno') }}" 
                                                    placeholder="Apellido materno (opcional)"
-                                                   minlength="2"
+                                                   minlength="5"  
                                                    maxlength="100"
                                                    pattern="^[\p{L}\s'.ÁÉÍÓÚÜÑáéíóúüñ-]+$"
                                                    onkeypress="return soloLetras(event)">

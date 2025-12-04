@@ -155,10 +155,17 @@
                                                 </select>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td class="d-flex gap-2">
                                             <a href="{{ route('admin.solicitudes.show', $solicitud) }}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-eye"></i> Ver
                                             </a>
+                                            <form action="{{ route('admin.solicitudes.destroy', $solicitud) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta solicitud? Esta acción no se puede deshacer.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i> Eliminar
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @empty

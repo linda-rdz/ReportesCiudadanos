@@ -12,14 +12,16 @@
 
     <div class="row g-4">
         @foreach($categorias as $categoria)
-        <div class="col-lg-4 col-md-6">
+        @php($isLast = $loop->last)
+        @php($needsCenter = ($loop->count % 3) !== 0)
+        <div class="col-lg-4 col-md-6 {{ $isLast && $needsCenter ? 'offset-lg-4' : '' }}">
             <div class="card h-100 shadow-sm category-card" onclick="selectCategory({{ $categoria->id }})">
                 <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
                     @if($categoria->imagen)
                         <img src="{{ asset('storage/' . $categoria->imagen) }}" class="img-fluid" style="max-height: 180px; object-fit: contain;" alt="{{ $categoria->nombre }}">
                     @else
                         <div class="text-center">
-                            <i class="fas fa-{{ $categoria->icono ?? 'exclamation-triangle' }} fa-4x text-primary mb-3"></i>
+                            <i class="fas fa-{{ strtoupper($categoria->nombre) === 'OTRO' ? 'book' : ($categoria->icono ?? 'exclamation-triangle') }} fa-4x text-primary mb-3"></i>
                             <h5 class="text-muted">{{ $categoria->nombre }}</h5>
                         </div>
                     @endif

@@ -46,6 +46,11 @@ class Solicitud extends Model
         return $this->hasMany(Evidencia::class);
     }
 
+    public function mensajes()
+    {
+        return $this->hasMany(Mensaje::class);
+    }
+
     public function ciudadano()
     {
         return $this->belongsTo(User::class, 'ciudadano_id');

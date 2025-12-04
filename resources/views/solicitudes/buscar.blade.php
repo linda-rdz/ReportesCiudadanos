@@ -24,13 +24,21 @@
                                    required
                                    autofocus
                                    style="text-transform: uppercase;">
+                            <input type="tel"
+                                   class="form-control"
+                                   name="telefono"
+                                   id="telefono"
+                                   placeholder="Teléfono (10 dígitos)"
+                                   value="{{ old('telefono', $telefono ?? '') }}"
+                                   required
+                                   maxlength="10">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search me-1"></i>Buscar
                             </button>
                         </div>
                         <small class="form-text text-muted mt-2">
                             <i class="fas fa-info-circle me-1"></i>
-                            Ingresa el folio que recibiste al crear tu solicitud para consultar su estado.
+                            Ingresa folio y teléfono para consultar tu solicitud.
                         </small>
                     </form>
 
@@ -65,7 +73,7 @@
                                             <h6 class="text-primary">
                                                 <i class="fas fa-file-alt me-2"></i>Descripción del problema
                                             </h6>
-                                            <p class="text-muted">{{ $solicitud->descripcion }}</p>
+                                            <p class="text-muted">{{ \Illuminate\Support\Str::limit($solicitud->descripcion, 50) }}</p>
 
                                             <div class="row mt-3">
                                                 <div class="col-md-6">
@@ -120,11 +128,12 @@
                                                 <div class="row">
                                                     @foreach($solicitud->evidencias as $evidencia)
                                                         <div class="col-12 mb-2">
-                                                            <img src="{{ asset('storage/' . $evidencia->ruta_archivo) }}" 
+                                                            <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
                                                                  class="img-fluid rounded shadow-sm" 
                                                                  style="max-height: 200px; object-fit: cover; cursor: pointer; width: 100%;"
                                                                  data-bs-toggle="modal" 
                                                                  data-bs-target="#imageModal"
+                                                                 onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'" 
                                                                  onclick="showImage('{{ asset('storage/' . $evidencia->ruta_archivo) }}')">
                                                         </div>
                                                     @endforeach
@@ -135,6 +144,29 @@
                                                 </div>
                                             @endif
                                         </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <h6 class="text-primary">
+                                            <i class="fas fa-envelope me-2"></i>Mensajes del administrador
+                                        </h6>
+                                        @if($solicitud->mensajes && $solicitud->mensajes->count())
+                                            <ul class="list-group">
+                                                @foreach($solicitud->mensajes as $mensaje)
+                                                    <li class="list-group-item">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <span class="badge bg-secondary me-2">{{ $mensaje->tipo }}</span>
+                                                                {{ $mensaje->contenido }}
+                                                            </div>
+                                                            <small class="text-muted">{{ $mensaje->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</small>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            <p class="text-muted"><small>No hay mensajes aún.</small></p>
+                                        @endif
                                     </div>
 
                                     <div class="mt-4 pt-3 border-top">
@@ -154,8 +186,8 @@
                                     <i class="fas fa-exclamation-triangle me-2"></i>Solicitud no encontrada
                                 </h5>
                                 <p class="mb-0">
-                                    No se encontró ninguna solicitud con el folio <strong>{{ $folio }}</strong>.
-                                    Por favor verifica que hayas ingresado el folio correctamente.
+                                    No se encontró ninguna solicitud con el folio y teléfono proporcionados.
+                                    Verifica que ambos datos sean correctos.
                                 </p>
                             </div>
                         @endif
@@ -186,9 +218,11 @@ function showImage(imageSrc) {
     document.getElementById('modalImage').src = imageSrc;
 }
 
-// Convertir a mayúsculas automáticamente
 document.getElementById('folio')?.addEventListener('input', function(e) {
     e.target.value = e.target.value.toUpperCase();
+});
+document.getElementById('telefono')?.addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
 });
 </script>
 @endsection

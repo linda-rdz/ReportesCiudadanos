@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nombre' => 'Señalización',
                 'descripcion' => 'Señales de tránsito dañadas, faltantes o ilegibles',
-                'icono' => 'sign'
+                'icono' => 'exclamation-triangle'
             ],
         ];
 

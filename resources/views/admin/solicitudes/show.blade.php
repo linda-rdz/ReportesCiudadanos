@@ -113,11 +113,13 @@
                     <div class="row">
                         @foreach($solicitud->evidencias as $evidencia)
                             <div class="col-md-4 mb-3">
-                                <img src="{{ asset('storage/' . $evidencia->ruta_archivo) }}" 
+                                <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
                                      class="img-fluid rounded shadow" 
                                      data-bs-toggle="modal" 
                                      data-bs-target="#imagenModal{{ $evidencia->id }}"
-                                     style="cursor: pointer;">
+                                     style="cursor: pointer; object-fit: cover; max-height: 220px;"
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'">
                             </div>
 
                             <!-- Modal para ver imagen completa -->
@@ -125,13 +127,53 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <img src="{{ asset('storage/' . $evidencia->ruta_archivo) }}" class="img-fluid">
+                                            <img src="{{ asset('storage/' . $evidencia->ruta_archivo) }}" class="img-fluid" alt="Evidencia">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+                    @endif
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-envelope"></i> Mensajes al Ciudadano</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('admin.solicitudes.mensajes.store', $solicitud) }}" method="POST" class="mb-3">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Contenido del mensaje</label>
+                            <textarea name="contenido" class="form-control" rows="3" required placeholder="Escribe un mensaje informando el estado o indicaciones..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                    </form>
+
+                    @if($solicitud->mensajes->count())
+                        <ul class="list-group">
+                            @foreach($solicitud->mensajes as $mensaje)
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <span class="badge bg-secondary">{{ $mensaje->tipo }}</span>
+                                            {{ $mensaje->contenido }}
+                                        </div>
+                                        <small class="text-muted">
+                                            {{ $mensaje->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}
+                                            @if($mensaje->admin)
+                                                · {{ $mensaje->admin->name }}
+                                            @endif
+                                        </small>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-muted mb-0">Aún no hay mensajes para esta solicitud.</p>
                     @endif
                 </div>
             </div>

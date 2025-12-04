@@ -21,7 +21,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <h5>Descripción del problema</h5>
-                            <p class="text-muted">{{ $solicitud->descripcion }}</p>
+                            <p class="text-muted">{{ \Illuminate\Support\Str::limit($solicitud->descripcion, 50) }}</p>
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -34,6 +34,10 @@
                                         <li><strong>Colonia:</strong> {{ $solicitud->colonia->nombre ?? 'N/A' }}</li>
                                         <li><strong>Dirección:</strong> {{ $solicitud->direccion ?: 'No especificada' }}</li>
                                         <li><strong>Fecha de reporte:</strong> {{ $solicitud->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</li>
+                                        @if($solicitud->datos_personales)
+                                            <li><strong>Nombre del ciudadano:</strong> {{ $solicitud->datos_personales['nombre'] ?? '' }} {{ $solicitud->datos_personales['apellido_paterno'] ?? '' }} {{ $solicitud->datos_personales['apellido_materno'] ?? '' }}</li>
+                                            <li><strong>Celular:</strong> {{ $solicitud->datos_personales['celular'] ?? '' }}</li>
+                                        @endif
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
@@ -54,12 +58,13 @@
                                 <div class="row">
                                     @foreach($solicitud->evidencias as $evidencia)
                                         <div class="col-12 mb-2">
-                                            <img src="{{ asset('storage/' . $evidencia->ruta_archivo) }}" 
+                                            <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
                                                  class="img-fluid rounded shadow-sm" 
                                                  style="max-height: 200px; object-fit: cover; cursor: pointer;"
-                                                 data-bs-toggle="modal" 
-                                                 data-bs-target="#imageModal"
-                                                 onclick="showImage('{{ asset('storage/' . $evidencia->ruta_archivo) }}')">
+                                                  data-bs-toggle="modal" 
+                                                  data-bs-target="#imageModal"
+                                                  onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'" 
+                                                  onclick="showImage('{{ asset('storage/' . $evidencia->ruta_archivo) }}')">
                                         </div>
                                     @endforeach
                                 </div>
@@ -70,6 +75,26 @@
                             @endif
                         </div>
                     </div>
+
+                    <hr>
+                    <h5>Mensajes del administrador</h5>
+                    @if($solicitud->mensajes && $solicitud->mensajes->count())
+                        <ul class="list-group mb-3">
+                            @foreach($solicitud->mensajes as $mensaje)
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <span class="badge bg-secondary me-2">{{ $mensaje->tipo }}</span>
+                                            {{ $mensaje->contenido }}
+                                        </div>
+                                        <small class="text-muted">{{ $mensaje->created_at->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}</small>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-muted">Aún no hay mensajes.</p>
+                    @endif
 
                     <div class="mt-4">
                         <a href="{{ route('solicitudes.index') }}" class="btn btn-outline-secondary">

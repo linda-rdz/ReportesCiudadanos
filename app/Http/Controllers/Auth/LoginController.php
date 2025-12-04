@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -16,24 +17,28 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+            'numero_empleado' => 'required|string',
+            'password' => 'required|string'
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
+        if (Auth::guard('admin')->attempt([
+            'numero_empleado' => $credentials['numero_empleado'],
+            'password' => $credentials['password']
+        ], $request->filled('remember'))) {
             $request->session()->regenerate();
-
-            // Redirigir según el rol
-            if (auth()->user()->role === 'admin') {
-                return redirect()->route('admin.solicitudes.index');
+            $empleado = auth()->user();
+            if (!$empleado || !$empleado->isAdmin() || !$empleado->isActivo()) {
+                Auth::guard('admin')->logout();
+                return back()->withErrors([
+                    'numero_empleado' => 'Acceso exclusivo para administradores activos.'
+                ])->onlyInput('numero_empleado');
             }
-
-            return redirect()->route('ciudadano.solicitudes.index');
+            return redirect()->route('admin.solicitudes.index');
         }
 
         return back()->withErrors([
-            'email' => 'Las credenciales no coinciden con nuestros registros.',
-        ])->onlyInput('email');
+            'numero_empleado' => 'Número de empleado o contraseña incorrectos.'
+        ])->onlyInput('numero_empleado');
     }
 
     public function logout(Request $request)
@@ -44,5 +49,14 @@ class LoginController extends Controller
 
         return redirect()->route('home');
     }
-}
 
+    public function checkEmail(Request $request)
+    {
+        $email = $request->query('email');
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return response()->json(['exists' => false, 'valid' => false]);
+        }
+        $exists = User::where('email', $email)->exists();
+        return response()->json(['exists' => $exists, 'valid' => true]);
+    }
+}
