@@ -9,6 +9,7 @@ use App\Models\Colonia;
 use App\Models\Evidencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CiudadanoSolicitudController extends Controller
 {
@@ -91,7 +92,7 @@ class CiudadanoSolicitudController extends Controller
 
         $solicitud = Solicitud::create([
             'folio' => Solicitud::generarFolio(),
-            'titulo' => $validated['descripcion'],
+            'titulo' => Str::limit($validated['descripcion'], 250, ''),
             'descripcion' => $validated['descripcion'],
             'categoria_id' => $validated['categoria_id'],
             'colonia_id' => $validated['colonia_id'],
@@ -117,10 +118,50 @@ class CiudadanoSolicitudController extends Controller
         // Guardar evidencias si existen
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
-                $path = $file->store('evidencias', 'public');
+                if (!$file->isValid()) {
+                    continue;
+                }
+                $data = @file_get_contents($file->getRealPath());
+                if (!\function_exists('imagecreatefromstring')) {
+                    $path = $file->store('evidencias', 'public');
+                    Evidencia::create([
+                        'solicitud_id' => $solicitud->id,
+                        'ruta_archivo' => $path,
+                    ]);
+                    continue;
+                }
+                $img = @\imagecreatefromstring($data);
+                if ($img === false) {
+                    $path = $file->store('evidencias', 'public');
+                    Evidencia::create([
+                        'solicitud_id' => $solicitud->id,
+                        'ruta_archivo' => $path,
+                    ]);
+                    continue;
+                }
+                $uuid = Str::uuid()->toString();
+                $mainPath = 'evidencias/' . $uuid . '.jpg';
+                ob_start();
+                \imagejpeg($img, null, 85);
+                $jpeg = ob_get_clean();
+                Storage::disk('public')->put($mainPath, $jpeg);
+                $w = \imagesx($img);
+                $h = \imagesy($img);
+                $ratio = min(400 / max($w, 1), 400 / max($h, 1));
+                $tw = max((int)($w * $ratio), 1);
+                $th = max((int)($h * $ratio), 1);
+                $thumb = \imagecreatetruecolor($tw, $th);
+                \imagecopyresampled($thumb, $img, 0, 0, 0, 0, $tw, $th, $w, $h);
+                ob_start();
+                \imagejpeg($thumb, null, 80);
+                $thumbJpeg = ob_get_clean();
+                $thumbPath = 'evidencias/thumbs/' . $uuid . '.jpg';
+                Storage::disk('public')->put($thumbPath, $thumbJpeg);
+                \imagedestroy($img);
+                \imagedestroy($thumb);
                 Evidencia::create([
                     'solicitud_id' => $solicitud->id,
-                    'ruta_archivo' => $path,
+                    'ruta_archivo' => $mainPath,
                 ]);
             }
         }

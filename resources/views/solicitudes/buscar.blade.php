@@ -55,8 +55,7 @@
                             </div>
 
                             <div class="card border">
-                                <div class="card-header d-flex justify-content-between align-items-center bg-light">
-                                    <h5 class="mb-0">{{ $solicitud->titulo }}</h5>
+                                <div class="card-header d-flex justify-content-end align-items-center">
                                     <span class="badge 
                                         @if($solicitud->estado === 'Pendiente') bg-warning
                                         @elseif($solicitud->estado === 'En proceso') bg-info
@@ -69,14 +68,14 @@
 
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-8">
+                                        <div class="col-md-9">
                                             <h6 class="text-primary">
                                                 <i class="fas fa-file-alt me-2"></i>Descripción del problema
                                             </h6>
-                                            <p class="text-muted">{{ \Illuminate\Support\Str::limit($solicitud->descripcion, 50) }}</p>
+                                            <p class="fs-6">{{ $solicitud->descripcion }}</p>
 
                                             <div class="row mt-3">
-                                                <div class="col-md-6">
+                                        <div class="col-md-6">
                                                     <h6 class="text-primary">Información general</h6>
                                                     <ul class="list-unstyled">
                                                         <li><strong>Categoría:</strong> {{ $solicitud->categoria->nombre ?? 'N/A' }}</li>
@@ -120,7 +119,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             @if($solicitud->evidencias->count() > 0)
                                                 <h6 class="text-primary">
                                                     <i class="fas fa-camera me-2"></i>Evidencias

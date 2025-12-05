@@ -68,6 +68,9 @@
         <main class="py-4">
             @yield('content')
         </main>
+        <footer class="text-center text-muted py-3">
+            <small>© 2024 Gobierno Municipal de Miguel Alemán.</small>
+        </footer>
     </div>
 
     <!-- Bootstrap JS -->

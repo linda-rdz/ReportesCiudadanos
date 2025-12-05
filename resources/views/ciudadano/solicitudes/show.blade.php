@@ -5,8 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card shadow">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0"><i class="fas fa-file-alt"></i> {{ $solicitud->titulo }}</h4>
+                <div class="card-header bg-white d-flex justify-content-end align-items-center">
                     <span class="badge 
                         @if($solicitud->estado === 'Pendiente') bg-warning text-dark
                         @elseif($solicitud->estado === 'En proceso') bg-info
@@ -19,9 +18,9 @@
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <h5><i class="fas fa-align-left"></i> Descripción del problema</h5>
-                            <p class="text-muted">{{ \Illuminate\Support\Str::limit($solicitud->descripcion, 50) }}</p>
+                            <p class="fs-6">{{ $solicitud->descripcion }}</p>
 
                             <hr>
 
@@ -83,9 +82,10 @@
                                     @endif
                                 </div>
                             </div>
+                            <hr>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             @if($solicitud->evidencias->count() > 0)
                                 <h6><i class="fas fa-images"></i> Evidencias ({{ $solicitud->evidencias->count() }})</h6>
                                 <div class="row">
@@ -94,6 +94,7 @@
                                             <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
                                                  class="img-fluid rounded shadow-sm" 
                                                  style="max-height: 200px; width: 100%; object-fit: cover; cursor: pointer;"
+                                                 loading="lazy"
                                                   data-bs-toggle="modal" 
                                                   data-bs-target="#imageModal"
                                                  onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'" 

@@ -7,8 +7,8 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Reportar Problema Urbano</h4>
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="headerBackBtn">
-                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    <button type="button" class="btn btn-outline-dark btn-volver" id="headerBackBtn">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
                     </button>
                 </div>
 
@@ -188,12 +188,14 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
-                                    Cancelar
-                                </a>
-                                <button type="button" class="btn btn-primary" id="nextStep">
-                                    Siguiente <i class="fas fa-arrow-right ms-1"></i>
-                                </button>
+                                <div>
+                                    <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
+                                        Cancelar
+                                    </a>
+                                    <button type="button" class="btn btn-primary" id="nextStep">
+                                        Siguiente <i class="fas fa-arrow-right ms-1"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -323,8 +325,7 @@
                                 </div>
                             </div>
 
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <div>
                                     <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
                                         Cancelar
@@ -345,7 +346,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.getElementById('nextStep');
-    const prevBtn = document.getElementById('prevStep');
+    const prevBtns = document.querySelectorAll('[data-action="prev-step"]');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const step1 = document.getElementById('step1');
     const step2 = document.getElementById('step2');
@@ -558,9 +559,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    prevBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        goToPreviousStep();
+    prevBtns.forEach(function(btn){
+        btn.addEventListener('click', function(e){
+            e.preventDefault();
+            goToPreviousStep();
+        });
     });
 });
 </script>
@@ -578,6 +581,10 @@ document.addEventListener('DOMContentLoaded', function() {
     position: relative;
 }
 
+</style>
+<style>
+.btn-volver { border-width: 2px; font-weight: 600; padding: 0.5rem 1rem; }
+.btn-volver i { font-size: 0.95rem; }
 </style>
 @endsection
 

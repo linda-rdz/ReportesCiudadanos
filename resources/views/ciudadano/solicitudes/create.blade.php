@@ -183,13 +183,18 @@
                                 </div>
                             </div>
 
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
-                                    Cancelar
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                <a href="{{ route('ciudadano.solicitudes.index') }}" class="btn btn-outline-dark btn-lg">
+                                    <i class="fas fa-arrow-left me-1"></i>Volver
                                 </a>
-                                <button type="button" class="btn btn-primary" id="nextStep">
-                                    Siguiente <i class="fas fa-arrow-right ms-1"></i>
-                                </button>
+                                <div>
+                                    <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">
+                                        Cancelar
+                                    </a>
+                                    <button type="button" class="btn btn-primary" id="nextStep">
+                                        Siguiente <i class="fas fa-arrow-right ms-1"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -322,8 +327,8 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                                <button type="button" class="btn btn-outline-secondary" id="prevStep">
-                                    <i class="fas fa-arrow-left me-1"></i>Anterior
+                                <button type="button" class="btn btn-outline-dark btn-lg" id="prevStep">
+                                    <i class="fas fa-arrow-left me-1"></i>Volver
                                 </button>
                                 <div>
                                     <a href="{{ route('home') }}" class="btn btn-outline-secondary me-md-2">

@@ -11,8 +11,15 @@
             </div>
 
             <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-file-alt"></i> Detalles de la Solicitud #{{ $solicitud->id }}</h4>
+                <div class="card-header bg-primary text-white d-flex justify-content-end align-items-center">
+                    <span class="badge 
+                        @if($solicitud->estado === 'Pendiente') bg-warning text-dark
+                        @elseif($solicitud->estado === 'En proceso') bg-info
+                        @elseif($solicitud->estado === 'Resuelto') bg-success
+                        @else bg-danger
+                        @endif fs-6">
+                        {{ $solicitud->estado }}
+                    </span>
                 </div>
                 <div class="card-body">
                     <!-- Estado y acciones -->
@@ -112,12 +119,12 @@
                     <h5><i class="fas fa-images"></i> Evidencias</h5>
                     <div class="row">
                         @foreach($solicitud->evidencias as $evidencia)
-                            <div class="col-md-4 mb-3">
+                            <div class="col-6 col-md-4 mb-3">
                                 <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
-                                     class="img-fluid rounded shadow" 
+                                     class="img-fluid rounded shadow-sm" 
                                      data-bs-toggle="modal" 
                                      data-bs-target="#imagenModal{{ $evidencia->id }}"
-                                     style="cursor: pointer; object-fit: cover; max-height: 220px;"
+                                     style="height: 120px; width: 100%; object-fit: cover; cursor: pointer;"
                                      loading="lazy"
                                      onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'">
                             </div>

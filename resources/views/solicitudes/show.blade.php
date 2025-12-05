@@ -5,8 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">{{ $solicitud->titulo }}</h4>
+                <div class="card-header d-flex justify-content-end align-items-center">
                     <span class="badge 
                         @if($solicitud->estado === 'Pendiente') bg-warning
                         @elseif($solicitud->estado === 'En proceso') bg-info
@@ -19,9 +18,9 @@
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <h5>Descripción del problema</h5>
-                            <p class="text-muted">{{ \Illuminate\Support\Str::limit($solicitud->descripcion, 50) }}</p>
+                            <p class="fs-6">{{ $solicitud->descripcion }}</p>
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -52,19 +51,20 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             @if($solicitud->evidencias->count() > 0)
                                 <h6>Evidencias</h6>
                                 <div class="row">
                                     @foreach($solicitud->evidencias as $evidencia)
-                                        <div class="col-12 mb-2">
+                                        <div class="col-6 col-md-4 mb-2">
                                             <img src="{{ asset('storage/' . str_replace('evidencias/', 'evidencias/thumbs/', $evidencia->ruta_archivo)) }}" 
                                                  class="img-fluid rounded shadow-sm" 
-                                                 style="max-height: 200px; object-fit: cover; cursor: pointer;"
-                                                  data-bs-toggle="modal" 
-                                                  data-bs-target="#imageModal"
-                                                  onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'" 
-                                                  onclick="showImage('{{ asset('storage/' . $evidencia->ruta_archivo) }}')">
+                                                 style="height: 120px; width: 100%; object-fit: cover; cursor: pointer;"
+                                                 loading="lazy"
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#imageModal"
+                                                 onerror="this.onerror=null; this.src='{{ asset('storage/' . $evidencia->ruta_archivo) }}'" 
+                                                 onclick="showImage('{{ asset('storage/' . $evidencia->ruta_archivo) }}')">
                                         </div>
                                     @endforeach
                                 </div>

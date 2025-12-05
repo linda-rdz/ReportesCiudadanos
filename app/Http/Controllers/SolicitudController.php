@@ -89,7 +89,7 @@ class SolicitudController extends Controller
 
         $solicitud = Solicitud::create([
             'folio' => Solicitud::generarFolio(),
-            'titulo' => $validated['descripcion'], // Usar descripción como título
+            'titulo' => Str::limit($validated['descripcion'], 250, ''),
             'descripcion' => $validated['descripcion'],
             'categoria_id' => $validated['categoria_id'],
             'colonia_id' => $validated['colonia_id'],
